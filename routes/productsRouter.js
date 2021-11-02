@@ -1,24 +1,22 @@
 const express = require('express')
 const router = express.Router()
+const ProductService = require('../services/productsService')
 
-const products = [
-  {
-    name: 'Product 1',
-    quantity: 1
-  },
-  {
-    name: 'Product 2',
-    quantity: 2
-  },
-]
+const service = new ProductService()
 
 router.get('/', (req, res) => {
+  const products = service.find()
   res.json(products)
 })
 
 router.get('/:id', (req, res) => {
-  const { id } = req.params
-  res.json(products[id])
+  try {
+    const { id } = req.params
+    const product = service.findOne(id)
+    res.json(product)
+  } catch (error) {
+    res.status(404).json({message: error.message})
+  }
 })
 
 module.exports = router
